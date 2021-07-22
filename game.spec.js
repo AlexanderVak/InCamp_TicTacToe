@@ -1,98 +1,86 @@
 const { it, expect } = require("@jest/globals")
-let fieldLineH = [
-    ['x', 'o', 'o'],
-    ['o', 'o', 'x'],
-    ['x', 'x', 'x'],
-]
-let fieldLineV = [
-    ['o', 'x', 'o'],
-    ['o', 'x', 'x'],
-    ['x', 'x', 'o'],
-]
-let fieldDiagonal = [
-    ['x', 'o', 'x'],
-    ['o', 'x', 'o'],
-    ['o', 'x', 'x'],
-]
+import { moves, hlw, vlw, dw,  cellTaken, isEmptyField, play} from "./game";
 
-let fieldWithEmpty = [
-    ['x', 'o', 'o'],
-    ['o', 'o', 'x'],
-    ['x', 'x', ''],
-]
-let moves = [[0, 0], [0, 1], [1, 2], [0, 2], [2, 0], [1, 0], [2, 1], [1, 1], [2, 2]]
-
-function hlw(field) {
-    for (let i = 0; i < field.length; i++) {
-        if (field[i][0] === field[i][1] && field[i][1] === field[i][2]) {
-            return true
-        }
-    }
+const field = {
+    lineH: [
+        ['x', 'o', 'o'],
+        ['o', 'o', 'x'],
+        ['x', 'x', 'x'],
+    ],
+    lineV: [
+        ['o', 'x', 'o'],
+        ['o', 'x', 'x'],
+        ['x', 'x', 'o'],
+    ],
+    diagonal:[
+        ['x', 'o', 'x'],
+        ['o', 'x', 'o'],
+        ['o', 'x', 'x'],
+    ],
+    withEmptyCell:[
+        ['x', 'o', 'o'],
+        ['x', 'x', 'x'],
+        ['o', 'o', ''],
+    ],
+    withOneTakenCell:[
+        ['x', '', ''],
+        ['', '', ''], 
+        ['', '', '']
+    ],
+    empty:[
+        ['', '', ''],
+        ['', '', ''], 
+        ['', '', '']
+    ]
 }
+const filledGrid = `| x | o | o |
+=============
+| o | o | x |
+=============
+| x | x | x |`
 
-function vlw(field) {
-    for (let i = 0; i < field.length; i++) {
-        if (field[0][i] === field[1][i] && field[1][i] === field[2][i]) {
-            return true
-        }
-    }
-}
+const grid = `| ${field.empty} | ${field.empty} | ${field.empty} |
+=============
+| ${field.empty} | ${field.empty} | ${field.empty} |
+=============
+| ${field.empty} | ${field.empty} | ${field.empty} |`
 
-function dw(field) {
-    if (field[0][0] === field[1][1] && field[1][1] === field[2][2]
-        || field[0][2] === field[1][1] && field[1][1] === field[2][0]) {
-        return true
-    }
-}
-
-function cellTaken(field, coords) {
-
-    if (field[coords[0]][coords[1]] === '' || field[coords[0]][coords[1]] === ' ' || field[coords[0]][coords[1]] === null) {
-        return false
-    }
-    else return true
-}
-
-function play(moves, field) {
-    for (let i = 0; i < 9; i++) {
-        if (!cellTaken(field, moves[i])) {
-            let player = ''
-            if (i % 2 == 0) {
-                field[moves[i][0]][moves[i][1]] = 'x'
-                player = 'x'
-            }
-            else {
-                field[moves[i][0]][moves[i][1]] = 'o'
-                player = 'o'
-            }
-        }
-    }
-    return field
-}
-
-function checkResults(field, moves, player) {
-    if (dw(field) || hlw(field) || vlw(field)) {
-        
-    }
-}
 
 describe('tic-tac-toe', () => {
     it('horizontal line win', () => {
-        expect(hlw(fieldLineH)).toBe(true)
+        expect(hlw(field.lineH)).toBeTruthy()
+    })
+    it('horizontal line on empty field', () => {
+        expect(hlw(field.empty)).toBeFalsy()
     })
     it('vertical line win', () => {
-        expect(vlw(fieldLineV)).toBe(true)
+        expect(vlw(field.lineV)).toBe(true)
+    })
+    it('vertical line on empty field', () => {
+        expect(vlw(field.empty)).toBe(false)
     })
     it('diagonal win', () => {
-        expect(dw(fieldDiagonal)).toBe(true)
+        expect(dw(field.diagonal)).toBeTruthy()
+    })
+    it('diagonal on empty field', () => {
+        expect(dw(field.empty)).toBe(false)
     })
     it('is cell taken', () => {
-        expect(cellTaken(fieldWithEmpty, [0, 0])).toBe(true)
+        expect(cellTaken(field.withEmptyCell, [0, 0])).toBeTruthy()
     })
     it('is cell empty', () => {
-        expect(cellTaken(fieldWithEmpty, [2, 2])).toBe(false)
+        expect(cellTaken(field.withEmptyCell, [2, 2])).toBeFalsy()
+    })
+    it('is field empty', () => {
+        expect(isEmptyField(field.empty)).toBeTruthy()
     })
     it('play game by steps', () => {
         expect(play(moves, [['', '', ''], ['', '', ''], ['', '', '']])).toEqual(fieldLineH)
     })
+    it('X wins', () => {
+        expect(play(field.empty, moves)).toMatch('x wins!')
+    })
+    it('draws game fie', () => {
+        expect(drawGrid(field.empty)).toMatch(filledGrid)
+    });
 })
