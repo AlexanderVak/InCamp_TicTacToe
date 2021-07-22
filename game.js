@@ -5,7 +5,6 @@ let field = [
 ]
 
 export const moves = [[0, 0], [0, 1], [1, 2], [0, 2], [2, 0], [1, 0], [2, 1], [1, 1], [2, 2]]
-
 export function hlw(field) {
     for (let i = 0; i < field.length; i++) {
         for (let j = 0; j < field[i].length; j++) {
@@ -25,6 +24,7 @@ export function cellsAreSame(field, firstIndex, secondIndex) {
 }
 
 export function vlw(field) {
+
     for (let i = 0; i < field.length; i++) {
         for (let j = 0; j < field[i].length; j++) {
             if(cellTaken(field, [j, i])){
@@ -33,6 +33,17 @@ export function vlw(field) {
             else continue
         }
     }
+}
+
+export function transpose (field) {
+    let transpose = [[], [], []]
+    console.log(field);
+    for (let i = 0; i < field.length; i++) {
+        for (let j = 0; j < field.length; j++) {            
+            transpose[j][i] = field[i][j]
+        }
+    }
+    return transpose
 }
 
 export function dw(field) {
@@ -98,4 +109,4 @@ export function drawGrid(field) {
 =============
 | ${field[2][0]} | ${field[2][1]} | ${field[2][2]} |`
 }
-console.log(drawGrid(field));
+

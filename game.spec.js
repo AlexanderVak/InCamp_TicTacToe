@@ -1,5 +1,5 @@
 const { it, expect } = require("@jest/globals")
-import { moves, hlw, vlw, dw,  cellTaken, isFieldEmpty, play, drawGrid} from "./game";
+import { moves, hlw, vlw, dw,  cellTaken, isFieldEmpty, play, drawGrid, transpose} from "./game";
 
 const field = {
     lineH: [
@@ -7,10 +7,20 @@ const field = {
         ['o', 'o', 'x'],
         ['x', 'x', 'x'],
     ],
+    transposeLineH:[
+        ['x', 'o', 'x'],
+        ['o', 'o', 'x'],
+        ['o', 'x', 'x'],
+    ],
     lineV: [
         ['o', 'x', 'o'],
         ['o', 'x', 'x'],
         ['x', 'x', 'o'],
+    ],
+    transposeLineV:[
+        ['o', 'o', 'x'],
+        ['x', 'x', 'x'],
+        ['o', 'x', 'o'],
     ],
     diagonal:[
         ['x', 'o', 'x'],
@@ -33,6 +43,7 @@ const field = {
         ['', '', '']
     ]
 }
+
 const filledGrid = `| x | o | o |
 =============
 | o | o | x |
@@ -44,7 +55,6 @@ const grid = `| ${field.empty} | ${field.empty} | ${field.empty} |
 | ${field.empty} | ${field.empty} | ${field.empty} |
 =============
 | ${field.empty} | ${field.empty} | ${field.empty} |`
-
 
 describe('tic-tac-toe', () => {
     it('horizontal line win', () => {
@@ -59,6 +69,9 @@ describe('tic-tac-toe', () => {
     it('vertical line on empty field', () => {
         expect(vlw(field.empty)).toBeUndefined()
     })
+    it('vertical lose on hline field', () => {
+        expect(vlw(field.lineH)).toBe(false)
+    })
     it('diagonal win', () => {
         expect(dw(field.diagonal)).toBeTruthy()
     })
@@ -66,7 +79,7 @@ describe('tic-tac-toe', () => {
         expect(dw(field.empty)).toBeFalsy()
     })
     it('diagonal lose on line win field', () => {
-        expect(dw(field.lineH)).toBeTruthy()
+        expect(dw(field.lineH)).toBe(false)
     })
     it('is cell taken', () => {
         expect(cellTaken(field.withEmptyCell, [0, 0])).toBeTruthy()
@@ -83,6 +96,9 @@ describe('tic-tac-toe', () => {
     it('X wins', () => {
         expect(play(field.empty, moves)).toMatch('x wins!')
     })
+    it('shows transposed field', () => {
+        expect(transpose(field.lineH)).toEqual(field.transposeLineH)
+    });
     it('draws game field', () => {
         expect(drawGrid(field.lineH)).toMatch(filledGrid)
     });
