@@ -1,5 +1,5 @@
 const { it, expect } = require("@jest/globals")
-import { moves, hlw, vlw, dw,  cellTaken, isEmptyField, play} from "./game";
+import { moves, hlw, vlw, dw,  cellTaken, isFieldEmpty, play, drawGrid} from "./game";
 
 const field = {
     lineH: [
@@ -51,19 +51,22 @@ describe('tic-tac-toe', () => {
         expect(hlw(field.lineH)).toBeTruthy()
     })
     it('horizontal line on empty field', () => {
-        expect(hlw(field.empty)).toBeFalsy()
+        expect(hlw(field.empty)).toBeUndefined()
     })
     it('vertical line win', () => {
         expect(vlw(field.lineV)).toBe(true)
     })
     it('vertical line on empty field', () => {
-        expect(vlw(field.empty)).toBe(false)
+        expect(vlw(field.empty)).toBeUndefined()
     })
     it('diagonal win', () => {
         expect(dw(field.diagonal)).toBeTruthy()
     })
     it('diagonal on empty field', () => {
-        expect(dw(field.empty)).toBe(false)
+        expect(dw(field.empty)).toBeFalsy()
+    })
+    it('diagonal lose on line win field', () => {
+        expect(dw(field.lineH)).toBeTruthy()
     })
     it('is cell taken', () => {
         expect(cellTaken(field.withEmptyCell, [0, 0])).toBeTruthy()
@@ -72,15 +75,15 @@ describe('tic-tac-toe', () => {
         expect(cellTaken(field.withEmptyCell, [2, 2])).toBeFalsy()
     })
     it('is field empty', () => {
-        expect(isEmptyField(field.empty)).toBeTruthy()
+        expect(isFieldEmpty(field.empty)).toBeTruthy()
     })
     it('play game by steps', () => {
-        expect(play(moves, [['', '', ''], ['', '', ''], ['', '', '']])).toEqual(fieldLineH)
+        expect(play(field.empty, moves)).toEqual(field.lineH)
     })
     it('X wins', () => {
         expect(play(field.empty, moves)).toMatch('x wins!')
     })
-    it('draws game fie', () => {
-        expect(drawGrid(field.empty)).toMatch(filledGrid)
+    it('draws game field', () => {
+        expect(drawGrid(field.lineH)).toMatch(filledGrid)
     });
 })

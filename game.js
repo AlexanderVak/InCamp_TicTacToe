@@ -4,15 +4,7 @@ let field = [
     ['x', 'x', 'x'],
 ]
 
-let grid =`| ${field[0][0]} | ${field[0][1]} | ${field[0][2]} |
-=============
-| ${field[1][0]} | ${field[1][1]} | ${field[1][2]} |
-=============
-| ${field[2][0]} | ${field[2][1]} | ${field[2][2]} |`
-
-console.log(grid)
-
-let moves = [[0, 0], [0, 1], [1, 2], [0, 2], [2, 0], [1, 0], [2, 1], [1, 1], [2, 2]]
+export const moves = [[0, 0], [0, 1], [1, 2], [0, 2], [2, 0], [1, 0], [2, 1], [1, 1], [2, 2]]
 
 export function hlw(field) {
     for (let i = 0; i < field.length; i++) {
@@ -59,8 +51,6 @@ export function dw(field) {
     }
 }
 
-
-
 export function cellTaken(field, coords) {
 
     if (field[coords[0]][coords[1]] === '' || field[coords[0]][coords[1]] === ' ' || field[coords[0]][coords[1]] === null) {
@@ -69,8 +59,12 @@ export function cellTaken(field, coords) {
     else return true
 }
 
+export function isFieldEmpty(field) {
+    return field.every(row => row.every((x) => x === ''))
+}
+
 export function play(field, moves) {
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i <= 8; i++) {
         if (!cellTaken(field, moves[i])) {
             let player = ''
             if (i % 2 == 0) {
@@ -85,12 +79,10 @@ export function play(field, moves) {
         }
     }    
 }
-export function isFieldEmpty(field) {
-    return field.every(row => row.every((x) => x === ''))
-}
+
 
 export function checkResults(field, player) {
-    if (!isFieldEmpty) {
+    if (!isFieldEmpty(field)) {
         if (dw(field) || hlw(field) || vlw(field)) {
             return `${player} wins!`
         }    else{
@@ -98,3 +90,12 @@ export function checkResults(field, player) {
         }
     }
 }
+
+export function drawGrid(field) {
+    return`| ${field[0][0]} | ${field[0][1]} | ${field[0][2]} |
+=============
+| ${field[1][0]} | ${field[1][1]} | ${field[1][2]} |
+=============
+| ${field[2][0]} | ${field[2][1]} | ${field[2][2]} |`
+}
+console.log(drawGrid(field));
