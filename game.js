@@ -5,61 +5,36 @@ let field = [
 ]
 
 export const moves = [[0, 0], [0, 1], [1, 2], [0, 2], [2, 0], [1, 0], [2, 1], [1, 1], [2, 2]]
-export function hlw(field) {
+
+export function lineWictory(field) {
     for (let i = 0; i < field.length; i++) {
         for (let j = 0; j < field[i].length; j++) {
-            if(cellTaken(field, [i, j]) && field[i].every((x) => x === field[i][0] )){
+            if (cellTaken(field, [i, j]) && field[i].every((x) => x === field[i][0])) {
                 return true
             }
-            else continue
-        }        
-    }
-}
-
-export function cellsAreSame(field, firstIndex, secondIndex) {
-    if ((field[firstIndex][secondIndex] !== field [firstIndex][0])) {
-        return false
-    }
-    else return true     
-}
-
-export function vlw(field) {
-
-    for (let i = 0; i < field.length; i++) {
-        for (let j = 0; j < field[i].length; j++) {
-            if(cellTaken(field, [j, i])){
-                return cellsAreSame(field, j, i)             
-            }
-            else continue
         }
     }
+    return false
 }
 
-export function transpose (field) {
+export function transpose(field) {
     let transpose = [[], [], []]
-    console.log(field);
     for (let i = 0; i < field.length; i++) {
-        for (let j = 0; j < field.length; j++) {            
+        for (let j = 0; j < field.length; j++) {
             transpose[j][i] = field[i][j]
         }
     }
     return transpose
 }
 
-export function dw(field) {
+export function diagonalWictory(field) {
 
-    for (let i = 0; i < field.length; i++) {
- 
-        for (let j = field[i].length - 1; j >= 0 ; j--) {
-            if (cellTaken(field, [i, i])) {
-                return cellsAreSame(field, i, i)
-            }
-            else if (cellTaken(field, [i, j])) {
-                return cellsAreSame(field, i, j)
-            }
-            else continue
+    for (let i = 1; i < field.length; i++) {
+        if ((field[i][i] !== field[0][0])) {
+            return false
         }
     }
+    return true
 }
 
 export function cellTaken(field, coords) {
@@ -70,40 +45,62 @@ export function cellTaken(field, coords) {
     else return true
 }
 
-export function isFieldEmpty(field) {
-    return field.every(row => row.every((x) => x === ''))
+export function fieldIsEmpty(field) {
+    return field.every(row => row.every((cell) => cell === ''))
+}
+
+export function fieldIsFull(field) {
+    return field.every(row => row.every((cell) => cell === 'x' || cell === 'o'))
 }
 
 export function play(field, moves) {
-    for (let i = 0; i <= 8; i++) {
-        if (!cellTaken(field, moves[i])) {
+    let index = 0
+    let results = ''
+
+    while (!fieldIsFull(field)) {
+        if (!cellTaken(field, moves[index])) {
             let player = ''
-            if (i % 2 == 0) {
-                field[moves[i][0]][moves[i][1]] = 'x'
+            if (index % 2 == 0) {
+                field[moves[index][0]][moves[index][1]] = 'x'
                 player = 'x'
             }
             else {
-                field[moves[i][0]][moves[i][1]] = 'o'
+                field[moves[index][0]][moves[index][1]] = 'o'
                 player = 'o'
             }
-            checkResults(field, player)
+            results = checkResults(field, player)
         }
-    }    
+        index ++
+    }
+    return results
+
+    // for (let i = 0; i < 9; i++) {
+    //     if (!cellTaken(field, moves[i])) {
+    //         let player = ''
+    //         if (i % 2 == 0) {
+    //             field[moves[i][0]][moves[i][1]] = 'x'
+    //             player = 'x'
+    //         }
+    //         else {
+    //             field[moves[i][0]][moves[i][1]] = 'o'
+    //             player = 'o'
+    //         }
+    //         checkResults(field, player)
+    //     }
+    // }
 }
-
-
 export function checkResults(field, player) {
-    if (!isFieldEmpty(field)) {
-        if (dw(field) || hlw(field) || vlw(field)) {
+    if (!fieldIsEmpty(field)) {
+        if (lineWictory(field) || lineWictory(transpose(field)) || diagonalWictory(field) || diagonalWictory(transpose(field))) {
             return `${player} wins!`
-        }    else{
-            return 'It`s a draw !'
+        }else if (fieldIsFull(field)) {
+            return 'It`s draw!'        
         }
     }
 }
 
 export function drawGrid(field) {
-    return`| ${field[0][0]} | ${field[0][1]} | ${field[0][2]} |
+    return `| ${field[0][0]} | ${field[0][1]} | ${field[0][2]} |
 =============
 | ${field[1][0]} | ${field[1][1]} | ${field[1][2]} |
 =============
