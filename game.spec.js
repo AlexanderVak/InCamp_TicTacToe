@@ -1,5 +1,5 @@
 const { it, expect } = require("@jest/globals")
-import { moves, hlw, vlw, dw,  cellTaken, isFieldEmpty, play, drawGrid, transpose} from "./game";
+import { moves, lineWictory, vlw, diagonalWictory,  cellTaken, fieldIsEmpty, play, drawGrid, transpose, fieldIsFull} from "./game";
 
 const field = {
     lineH: [
@@ -58,28 +58,25 @@ const grid = `| ${field.empty} | ${field.empty} | ${field.empty} |
 
 describe('tic-tac-toe', () => {
     it('horizontal line win', () => {
-        expect(hlw(field.lineH)).toBeTruthy()
+        expect(lineWictory(field.lineH)).toBeTruthy()
     })
     it('horizontal line on empty field', () => {
-        expect(hlw(field.empty)).toBeUndefined()
+        expect(lineWictory(field.empty)).toBe(false)
     })
     it('vertical line win', () => {
-        expect(vlw(field.lineV)).toBe(true)
+        expect(lineWictory(transpose(field.lineV))).toBe(true)
     })
     it('vertical line on empty field', () => {
-        expect(vlw(field.empty)).toBeUndefined()
+        expect(lineWictory(transpose(field.empty))).toBe(false)
     })
     it('vertical lose on hline field', () => {
-        expect(vlw(field.lineH)).toBe(false)
+        expect(lineWictory(transpose(field.lineH))).toBe(false)
     })
     it('diagonal win', () => {
-        expect(dw(field.diagonal)).toBeTruthy()
-    })
-    it('diagonal on empty field', () => {
-        expect(dw(field.empty)).toBeFalsy()
+        expect(diagonalWictory(field.diagonal)).toBeTruthy()
     })
     it('diagonal lose on line win field', () => {
-        expect(dw(field.lineH)).toBe(false)
+        expect(diagonalWictory(transpose(field.lineH))).toBe(false)
     })
     it('is cell taken', () => {
         expect(cellTaken(field.withEmptyCell, [0, 0])).toBeTruthy()
@@ -88,7 +85,11 @@ describe('tic-tac-toe', () => {
         expect(cellTaken(field.withEmptyCell, [2, 2])).toBeFalsy()
     })
     it('is field empty', () => {
-        expect(isFieldEmpty(field.empty)).toBeTruthy()
+        expect(fieldIsEmpty(field.empty)).toBeTruthy()
+    })
+
+    it('is field full', () => {
+        expect(fieldIsFull(field.diagonal)).toBeTruthy()
     })
     it('play game by steps', () => {
         expect(play(field.empty, moves)).toEqual(field.lineH)
@@ -96,7 +97,7 @@ describe('tic-tac-toe', () => {
     it('X wins', () => {
         expect(play(field.empty, moves)).toMatch('x wins!')
     })
-    it('shows transposed field', () => {
+    it('returns transposed field', () => {
         expect(transpose(field.lineH)).toEqual(field.transposeLineH)
     });
     it('draws game field', () => {
